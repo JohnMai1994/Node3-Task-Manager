@@ -32,7 +32,7 @@ const myFunction = async () => {
     console.log(isMatch);
 }
 
-myFunction();
+// myFunction();
 
 // andrew -> lakjdsfowqiure -> andrew
 // mypass -> lakdsjflasdfjal  which is one way
