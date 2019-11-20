@@ -49,6 +49,29 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+// First Method to hide user.password and user.tokens
+// userSchema.methods.getPublicProfile = function () {
+//     const user = this;
+//     const userObject = user.toObject();
+//
+//     delete userObject.password;
+//     delete userObject.tokens;
+//
+//     return userObject;
+// }
+
+// Second Method
+userSchema.methods.toJSON = function () {
+    const user = this;
+    const userObject = user.toObject();
+
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
+}
+
+
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = jwt.sign({_id: user._id.toString()}, 'thisismynewcourse');

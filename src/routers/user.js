@@ -30,7 +30,10 @@ router.post('/users/login',async (req,res)=> {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken()
-        res.send({user,token});
+        // First Method to hide user.password and user.tokens
+        // res.send({ user: user.getPublicProfile(), token});
+        // Second Method
+        res.send({user, token})
     } catch (e) {
         console.log(e)
         res.status(400).send(e.Error);
@@ -106,7 +109,40 @@ router.get("/users/:id", async (req, res)=> {
     // })
 });
 
-router.patch('/users/:id', async (req,res) => {
+
+
+// router.patch('/users/:id', async (req,res) => {
+//     const updates = Object.keys(req.body);
+//     const allowedUpdates = ["name", 'email', 'password', 'age'];
+//     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+//
+//     if (!isValidOperation) {
+//         return res.status(400).send({error: "invalid updates!"})
+//     }
+//
+//     try {
+//         const user = await User.findById(req.params.id);
+//
+//         updates.forEach((update) => {
+//             user[update] = req.body[update];
+//         })
+//
+//         await user.save()
+//
+//         // const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
+//
+//         if (!user) {
+//             return res.status(404).send("404 Man!");
+//         }
+//
+//         res.send(user);
+//
+//     }catch (e) {
+//         res.status(400).send(e);
+//     }
+// })
+
+router.patch('/users/me',auth, async (req,res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ["name", 'email', 'password', 'age'];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
@@ -116,37 +152,42 @@ router.patch('/users/:id', async (req,res) => {
     }
 
     try {
-        const user = await User.findById(req.params.id);
-
         updates.forEach((update) => {
-            user[update] = req.body[update];
+            req.user[update] = req.body[update];
         })
-
-        await user.save()
-
-        // const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
-
-        if (!user) {
-            return res.status(404).send("404 Man!");
-        }
-
-        res.send(user);
+        await req.user.save()
+        res.send(req.user);
 
     }catch (e) {
         res.status(400).send(e);
     }
 })
 
-router.delete('/users/:id', async (req,res) => {
+// router.delete('/users/:id' , async (req,res) => {
+//     try {
+//         const user = await User.findByIdAndDelete(req.params.id);
+//         if (!user) {
+//             return res.status(404).send("Id is not exist")
+//         }
+//         res.send(user)
+//     } catch (e) {
+//         res.status(500).send();
+//     }
+// })
+
+router.delete('/users/me', auth , async (req,res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) {
-            return res.status(404).send("Id is not exist")
-        }
-        res.send(user)
+        // const user = await User.findByIdAndDelete(req.user._id);
+        // if (!user) {
+        //     return res.status(404).send("Id is not exist")
+        // }
+
+        await req.user.remove();
+        res.send(req.user)
     } catch (e) {
-        res.status(500).send();
+        res.status(500).send(e);
     }
 })
+
 
 module.exports = router;
