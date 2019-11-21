@@ -35,28 +35,46 @@ app.listen(port, () => {
     console.log("Server is up on port "+ port);
 });
 
+const Task = require("./models/task");
+const User = require("./models/user")
 
-// const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const myFunction = async () => {
-    //------------- Bcrypt ------------------
-    // const password = 'Red12345!';
-    // const hashedPassword = await bcrypt.hash(password, 8);
-    // console.log(password);
-    // console.log(hashedPassword);
-    //
-    // const isMatch = await bcrypt.compare('Red12345!', hashedPassword);
-    // console.log(isMatch);
-    // ------------------------------
-    // const token = jwt.sign({ _id: 'abc123' }, 'thisismynewcourse', {expiresIn: "1 day"});
-    // console.log(token)
-    //
-    // const data = jwt.verify(token, 'thisismynewcourse');
-    // console.log(data);
+const main = async () =>{
+    // const task = await Task.findById("5dd5c2c06f8fd132b6aafae1");
+    // await task.populate('owner').execPopulate()
+    // console.log(task.owner);
+
+    const user = await  User.findById("5dd5c2626f8fd132b6aafadf");
+    await user.populate("tasks").execPopulate();
+    console.log(user.tasks);
 
 }
 
-// myFunction();
+main()
 
-// andrew -> lakjdsfowqiure -> andrew
-// mypass -> lakdsjflasdfjal  which is one way
+
+
+
+// // const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+// const myFunction = async () => {
+//     //------------- Bcrypt ------------------
+//     // const password = 'Red12345!';
+//     // const hashedPassword = await bcrypt.hash(password, 8);
+//     // console.log(password);
+//     // console.log(hashedPassword);
+//     //
+//     // const isMatch = await bcrypt.compare('Red12345!', hashedPassword);
+//     // console.log(isMatch);
+//     // ------------------------------
+//     // const token = jwt.sign({ _id: 'abc123' }, 'thisismynewcourse', {expiresIn: "1 day"});
+//     // console.log(token)
+//     //
+//     // const data = jwt.verify(token, 'thisismynewcourse');
+//     // console.log(data);
+//
+// }
+//
+// // myFunction();
+//
+// // andrew -> lakjdsfowqiure -> andrew
+// // mypass -> lakdsjflasdfjal  which is one way

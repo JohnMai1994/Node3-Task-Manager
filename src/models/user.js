@@ -49,6 +49,13 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+
 // First Method to hide user.password and user.tokens
 // userSchema.methods.getPublicProfile = function () {
 //     const user = this;
