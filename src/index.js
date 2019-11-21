@@ -49,7 +49,7 @@ const main = async () =>{
 
 }
 
-main()
+// main()
 
 
 

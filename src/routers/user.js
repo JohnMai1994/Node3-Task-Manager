@@ -163,25 +163,9 @@ router.patch('/users/me',auth, async (req,res) => {
     }
 })
 
-// router.delete('/users/:id' , async (req,res) => {
-//     try {
-//         const user = await User.findByIdAndDelete(req.params.id);
-//         if (!user) {
-//             return res.status(404).send("Id is not exist")
-//         }
-//         res.send(user)
-//     } catch (e) {
-//         res.status(500).send();
-//     }
-// })
 
 router.delete('/users/me', auth , async (req,res) => {
     try {
-        // const user = await User.findByIdAndDelete(req.user._id);
-        // if (!user) {
-        //     return res.status(404).send("Id is not exist")
-        // }
-
         await req.user.remove();
         res.send(req.user)
     } catch (e) {
