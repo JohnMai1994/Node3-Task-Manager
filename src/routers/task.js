@@ -4,18 +4,36 @@ const auth = require('../middleware/auth')
 const router = new express.Router();
 
 // GET /task?completed=false
+// GET /task?limit=10&skip=10
+// GET /task?sortBy=createdAt_asc/createdAt_desc
 router.get('/task', auth ,async (req, res) => {
     const match = {};
+    const sort = {};
     if (req.query.completed) {
         match.completed = req.query.completed === "true"
     }
 
+    if (req.query.sortBy) {
+        // const parts = req.query.sortBy.split(":");
+        // sort[parts[1]] = sort[parts[2]] === 'desc' ? -1 : 1;
 
-    const _id = req.params.id;
+
+        const groups = req.query.sortBy.split('|');
+        groups.forEach((group) => {
+            const parts = group.split(':');
+            sort[parts[1]] = sort[parts[2]] === 'desc' ? -1 : 1;
+        });
+    }
+
     try {
         await req.user.populate({
             path: "tasks",
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
         }).execPopulate();
         res.send(req.user.tasks)
 
@@ -25,6 +43,7 @@ router.get('/task', auth ,async (req, res) => {
     }
 });
 
+// GET /task/id
 router.get('/task/:id', auth , async (req, res) => {
     const _id = req.params.id;
     try {
@@ -38,6 +57,7 @@ router.get('/task/:id', auth , async (req, res) => {
     }
 });
 
+// POST /task
 router.post('/task', auth, async (req, res) => {
     const task = new Task({
         ...req.body,
@@ -51,6 +71,7 @@ router.post('/task', auth, async (req, res) => {
     }
 });
 
+// UPDATE /task/id
 router.patch('/task/:id', auth ,async (req, res)=> {
     const updates = Object.keys(req.body);
     const allowedUpdates = ["description", 'completed'];
